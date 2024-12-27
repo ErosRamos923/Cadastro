@@ -1,0 +1,143 @@
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuário</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="container bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Registro de Usuário</h2>
+        <form id="formularioRegistro">
+            <div class="form-group mb-4">
+                <label for="nomeUsuario" class="block text-gray-700">Nome de Usuário</label>
+                <input type="text" id="nomeUsuario" name="nomeUsuario" class="w-full p-2 border border-gray-300 rounded mt-1" required>
+                <div class="error text-red-500 text-sm mt-1" id="erroNomeUsuario"></div>
+            </div>
+            <div class="form-group mb-4">
+                <label for="email" class="block text-gray-700">Email</label>
+                <input type="email" id="email" name="email" class="w-full p-2 border border-gray-300 rounded mt-1" required>
+                <div class="error text-red-500 text-sm mt-1" id="erroEmail"></div>
+            </div>
+            <div class="form-group mb-4">
+                <label for="senha" class="block text-gray-700">Senha</label>
+                <input type="password" id="senha" name="senha" class="w-full p-2 border border-gray-300 rounded mt-1" required>
+                <div class="error text-red-500 text-sm mt-1" id="erroSenha"></div>
+            </div>
+            <div class="form-group mb-4">
+                <label for="confirmarSenha" class="block text-gray-700">Confirmar Senha</label>
+                <input type="password" id="confirmarSenha" name="confirmarSenha" class="w-full p-2 border border-gray-300 rounded mt-1" required>
+                <div class="error text-red-500 text-sm mt-1" id="erroConfirmarSenha"></div>
+            </div>
+            <div class="form-group mb-4">
+                <label for="celular" class="block text-gray-700">Número de Celular</label>
+                <input type="text" id="celular" name="celular" class="w-full p-2 border border-gray-300 rounded mt-1" required>
+                <div class="error text-red-500 text-sm mt-1" id="erroCelular"></div>
+            </div>
+            <div class="form-group mb-4">
+                <label for="idGoverno" class="block text-gray-700">ID do Governo</label>
+                <input type="text" id="idGoverno" name="idGoverno" class="w-full p-2 border border-gray-300 rounded mt-1" required>
+                <div class="error text-red-500 text-sm mt-1" id="erroIdGoverno"></div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="w-full p-2 bg-blue-600 text-white rounded hover:bg-blue-700">Registrar</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('formularioRegistro').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let temErro = false;
+
+            const nomeUsuario = document.getElementById('nomeUsuario').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+            const celular = document.getElementById('celular').value;
+            const idGoverno = document.getElementById('idGoverno').value;
+
+            if (nomeUsuario.length < 3) {
+                document.getElementById('erroNomeUsuario').textContent = 'Nome de usuário deve ter pelo menos 3 caracteres';
+                temErro = true;
+            } else {
+                document.getElementById('erroNomeUsuario').textContent = '';
+            }
+
+            const padraoEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!padraoEmail.test(email)) {
+                document.getElementById('erroEmail').textContent = 'Endereço de email inválido';
+                temErro = true;
+            } else {
+                document.getElementById('erroEmail').textContent = '';
+            }
+
+            if (senha.length < 6) {
+                document.getElementById('erroSenha').textContent = 'Senha deve ter pelo menos 6 caracteres';
+                temErro = true;
+            } else {
+                document.getElementById('erroSenha').textContent = '';
+            }
+
+            if (senha !== confirmarSenha) {
+                document.getElementById('erroConfirmarSenha').textContent = 'As senhas não coincidem';
+                temErro = true;
+            } else {
+                document.getElementById('erroConfirmarSenha').textContent = '';
+            }
+
+            const padraoCelular = /^[0-9]{10,15}$/;
+            if (!padraoCelular.test(celular)) {
+                document.getElementById('erroCelular').textContent = 'Número de celular inválido';
+                temErro = true;
+            } else {
+                document.getElementById('erroCelular').textContent = '';
+            }
+
+            if (idGoverno.length < 5) {
+                document.getElementById('erroIdGoverno').textContent = 'ID do governo deve ter pelo menos 5 caracteres';
+                temErro = true;
+            } else {
+                document.getElementById('erroIdGoverno').textContent = '';
+            }
+
+            if (!temErro) {
+                fetch('/registrar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nomeUsuario,
+                        email,
+                        senha,
+                        celular,
+                        idGoverno
+                    })
+                })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data);
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
